@@ -18,7 +18,7 @@ module Giact
     
     
     def amount
-      "%.2f" % self[:amount].to_f
+     self[:amount].to_f
     end
     
     def test?
@@ -31,10 +31,11 @@ module Giact
     
     def to_request_hash
       h = {}
+      self[:test] = Giact.test_mode?
+      self[:amount] = "%.2f" % self[:amount]
       self.each do |key, value|
         h[key.camelize.gsub(/Id$/, "ID")] = value
       end
-      h[:amount] = amount
       h
     end
     

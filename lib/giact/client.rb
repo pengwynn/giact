@@ -48,11 +48,11 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) unless payment_request.valid?
       
-      response = self.class.post("/SinglePayment", :body => payment_request.to_hash)
+      response = self.class.post("/SinglePayment", :body => payment_request.to_request_hash)
       if reply = response['string']
         Giact::PaymentReply.new(reply)
       else
-        
+        raise response.body
       end
     end
     
@@ -64,7 +64,7 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::RecurringPaymentRequest) or not payment_request.valid?
       
-      response = self.class.post("/RecurringPayments", :body => payment_request.to_hash)
+      response = self.class.post("/RecurringPayments", :body => payment_request.to_request_hash)
       if reply = response['string']
         Giact::PaymentReply.new(reply)
       else
@@ -80,7 +80,7 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::InstallmentPaymentRequest) or not payment_request.valid?
       
-      response = self.class.post("/InstallmentsPayments", :body => payment_request.to_hash)
+      response = self.class.post("/InstallmentsPayments", :body => payment_request.to_request_hash)
       if reply = response['string']
         Giact::PaymentReply.new(reply)
       else

@@ -230,7 +230,7 @@ class TestGiact < Test::Unit::TestCase
     
     should "support amount as float" do
       @payment_request.amount = 30.4
-      @payment_request.amount.should == "30.40"
+      @payment_request.to_request_hash['Amount'].should == "30.40"
     end
     
 
@@ -258,7 +258,7 @@ class TestGiact < Test::Unit::TestCase
     
     should "support amount as float" do
       @payment_request.amount = 30.4
-      @payment_request.amount.should == "30.40"
+      @payment_request.to_request_hash['Amount'].should == "30.40"
     end
     
     should "require a recurring amount" do

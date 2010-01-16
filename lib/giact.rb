@@ -3,11 +3,10 @@ require 'rubygems'
 gem 'activesupport', '~> 2.3.2'
 require 'activesupport'
 
-
 gem 'hashie', '~> 0.1.3'
 require 'hashie'
 
-gem 'httparty', '~> 0.4.5'
+gem 'httparty', '>= 0.5.0'
 require 'httparty'
 
 gem 'validatable', '~> 1.6.7'
@@ -73,7 +72,7 @@ module Giact
   end
   
   def self.test_mode?
-    @test_mode
+    @test_mode || false
   end
   
   def self.test_mode=(test_mode)
