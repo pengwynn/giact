@@ -1,0 +1,1 @@
+Exception of type 'GiactShared.gScanCustomClasses.UserAuthenticationException' was thrown.

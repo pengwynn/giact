@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<string xmlns="http://www.giact.com/webservices/RtcV4/">1889756|2010-01-14 23:02:53Z|False|True|Pass AV|C1234|O1234|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2347|50.00|False||||False||||False||||False||||||||||||
+1890087|2010-01-15 14:48:54Z|False|False|OrderID already passed|C1234|O1234|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2347|5.00|True|5.00|Monthly|2010-02-15 00:00:00Z|False||||False||||False||||||||||||
+1890089|2010-01-15 14:49:27Z|False|False|Duplicate check number|C1234|O1235|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2347|5.00|True|5.00|Monthly|2010-02-15 00:00:00Z|False||||False||||False||||||||||||
+1890090|2010-01-15 14:49:41Z|False|True|Pass AV|C1234|O1235|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2350|5.00|True|5.00|Monthly|2010-02-15 00:00:00Z|False||||False||||False||||||||||||
+</string>
