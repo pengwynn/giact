@@ -4,16 +4,15 @@ class TestGiact < Test::Unit::TestCase
   context "when using the Giact API" do
     setup do
       @client = Giact::Client.new(:company_id => 1976, :username => 'pengwynn', :password => 'OU812')
+      stub_post("/Login", "login.xml")
     end
 
     should "be able to log in" do
-      stub_post("/Login", "login.xml")
       token = @client.login
       token.should == 'f7edf569-e946-45d0-82b0-5ee44e3c027d'
     end
     
     should "retreive an auth token implicitly" do
-      stub_post("/Login", "login.xml")
       token = @client.token
       token.should == 'f7edf569-e946-45d0-82b0-5ee44e3c027d'
     end
@@ -169,6 +168,146 @@ class TestGiact < Test::Unit::TestCase
       end
     end
     
+    should "list recurring checks for an order ID" do
+      stub_post("/RecurringChecksByOrderID", "recurring_check_list.xml")
+      results = @client.recurring_checks(:order_id => "1234")
+      results.size.should == 2
+      results.first.check_id.should == 1001
+      results.first.check_date.year.should == 2010
+      results.last.returned?.should == true
+    end
+
+    should "list recurring checks for a transaction ID" do
+      stub_post("/RecurringChecksByTransactionID", "recurring_check_list.xml")
+      results = @client.recurring_checks(:transaction_id => "1234")
+      results.size.should == 2
+      results.first.check_id.should == 1001
+      results.first.check_date.year.should == 2010
+      results.last.returned?.should == true
+    end
+
+    should "cancel future recurring checks by order ID" do
+      stub_post("/CancelRecurringByOrderID", "cancel_recurring_check_list.xml")
+      results = @client.cancel_recurring(:order_id => "1234")
+      results.first.cancelled?.should == true
+      results.last.cancelled?.should == false
+      results.last.details.should == "No transactions were found for OrderID"
+    end
+
+    should "cancel future recurring checks by transaction ID" do
+      stub_post("/CancelRecurringByTransactionID", "cancel_recurring_check_list.xml")
+      results = @client.cancel_recurring(:transaction_id => "1234")
+      results.first.cancelled?.should == true
+      results.last.cancelled?.should == false
+    end
+
+    should_eventually "list installment checks by order ID" do
+
+    end
+
+    should_eventually "list installment checks by transaction ID" do
+
+    end
+
+    should_eventually "cancel future installment checks by order ID" do
+
+    end
+
+    should_eventually "cancel future installment checks by transaction ID" do
+
+    end
+
+    should_eventually "cancel a transaction by order ID that has not been batched" do
+
+    end
+
+    should_eventually "cancel a transaction by transaction ID that has not been batched" do
+
+    end
+
+    should_eventually "request a refund by order ID" do
+
+    end
+
+    should_eventually "request a refund by transaction ID" do
+
+    end
+
+    should_eventually "request a partial refund by order ID" do
+
+    end
+
+    should_eventually "request a partial refund by transaction ID" do
+
+    end
+
+    should_eventually "return a daily summary" do
+
+    end
+
+    should_eventually "list daily deposits for a given date" do
+
+    end
+
+    should_eventually "list checks returned for a given date" do
+
+    end
+
+    should_eventually "list checks refunded for a given date" do
+
+    end
+
+    should_eventually "list transactions scrubbed for a given date" do
+
+    end
+
+    should_eventually "list errored transactions for a given date" do
+
+    end
+
+    should_eventually "list checks returned for a given date range" do
+
+    end
+
+    should_eventually "list checks refunded for a given date range" do
+
+    end
+
+    should "search transactions by order ID" do
+      stub_post("/TransactionsByOrderID", "transaction_search.xml")
+      results = @client.search_transactions(:order_id => "1234")
+      results.first.transaction_id.should == 1889756
+      results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
+
+      results.last.transaction_id.should == 1890090
+      results.last.is_recurring?.should == true
+      results.last.recurring_frequency.should == 'monthly'
+    end
+
+    should "search transactions by customer ID" do
+      stub_post("/TransactionsByCustomerID", "transaction_search.xml")
+      results = @client.search_transactions(:customer_id => "1234")
+      results.first.transaction_id.should == 1889756
+      results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
+
+      results.last.transaction_id.should == 1890090
+      results.last.is_recurring?.should == true
+      results.last.recurring_frequency.should == 'monthly'
+    end
+
+    should "search transactions by name on check" do
+      stub_post("/TransactionsByNameOnCheck", "transaction_search.xml")
+      results = @client.search_transactions(:name_on_check => "Willy Wonka")
+      results.first.transaction_id.should == 1889756
+      results.first.error?.should == false
+      results.first.pass?.should == true
+      results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
+
+      results.last.transaction_id.should == 1890090
+      results.last.is_recurring?.should == true
+      results.last.recurring_frequency.should == 'monthly'
+    end
+    
   end
   
   context "when creating a payment request" do
@@ -270,112 +409,30 @@ class TestGiact < Test::Unit::TestCase
       @payment_request.recurring_amount = 69.95
       @payment_request.recurring_amount.should == "69.95"
     end
-  end
-  
-  should_eventually "list recurring checks for an order ID" do
     
   end
   
-  should_eventually "list recurring checks for a transaction ID" do
+  context "when parsing transaction search results" do
+    
+    should "parse a single row" do
+      row = "1890090|2010-01-15 14:49:41Z|False|True|Pass AV|C1234|O1235|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2350|5.00|True|5.00|Monthly|2010-02-15 00:00:00Z|False||||False||||False||||||||||||"
+      result = Giact::TransactionResult.new(row)
+      result.transaction_id.should == 1890090
+      result.name_on_check.should == "Wonkawerks"
+      result.timestamp.year.should == 2010
+      result.timestamp.month.should == 1
+    end
+    
+    should "parse multiple rows" do
+      text = Crack::XML.parse(fixture_file("transaction_search.xml"))
+      results = Giact::TransactionResult.from_response(text['string'])
+      results.size.should == 4
+      results.first.transaction_id.should == 1889756
+      results.last.routing_number.should == 320113000
+    end
     
   end
   
-  should_eventually "cancel future recurring checks by order ID" do
-    
-  end
   
-  should_eventually "cancel future recurring checks by transaction ID" do
-    
-  end
-  
-  should_eventually "list installment checks by order ID" do
-    
-  end
-  
-  should_eventually "list installment checks by transaction ID" do
-    
-  end
-  
-  should_eventually "cancel future installment checks by order ID" do
-    
-  end
-  
-  should_eventually "cancel future installment checks by transaction ID" do
-    
-  end
-  
-  should_eventually "cancel a transaction by order ID that has not been batched" do
-    
-  end
-  
-  should_eventually "cancel a transaction by transaction ID that has not been batched" do
-    
-  end
-  
-  should_eventually "request a refund by order ID" do
-    
-  end
-  
-  should_eventually "request a refund by transaction ID" do
-    
-  end
-  
-  should_eventually "request a partial refund by order ID" do
-    
-  end
-  
-  should_eventually "request a partial refund by transaction ID" do
-    
-  end
-  
-  should_eventually "return a daily summary" do
-    
-  end
-  
-  should_eventually "list daily deposits for a given date" do
-    
-  end
-  
-  should_eventually "list checks returned for a given date" do
-    
-  end
-  
-  should_eventually "list checks refunded for a given date" do
-    
-  end
-  
-  should_eventually "list transactions scrubbed for a given date" do
-    
-  end
-  
-  should_eventually "list errored transactions for a given date" do
-    
-  end
-  
-  should_eventually "list checks returned for a given date range" do
-    
-  end
-  
-  should_eventually "list checks refunded for a given date range" do
-    
-  end
-  
-  should_eventually "search transactions by order ID" do
-    
-  end
-  
-  should_eventually "search transactions by customer ID" do
-    
-  end
-  
-  should_eventually "search transactions by name on check" do
-    stub_post("/TransactionsByNameOnCheck", "transaction_search.xml")
-    results = @client.search_transactions(:name_on_check => "Willy Wonka")
-    results.first.transaction_id.should = 1889756
-    results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
-    
-    results.last.transaction_id.should == 1890090
-    results.last.is_recurring?.should == true
-    results.last.recurring_frequency.should == 'monthly'
-  end
+
 end

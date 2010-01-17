@@ -1,5 +1,5 @@
 require 'rubygems'
-
+require 'time'
 gem 'activesupport', '~> 2.3.2'
 require 'activesupport'
 
@@ -16,6 +16,22 @@ require 'validatable'
 directory = File.expand_path(File.dirname(__FILE__))
 
 Hash.send :include, Hashie::HashExtensions
+
+class Hash
+ 
+  # Converts all of the keys to strings, optionally formatting key name
+  def camelize_keys!
+    keys.each{|k|
+      v = delete(k)
+      new_key = k.to_s.camelize.gsub(/Id/, "ID")
+      self[new_key] = v
+      v.camelize_keys! if v.is_a?(Hash)
+      v.each{|p| p.camelize_keys! if p.is_a?(Hash)} if v.is_a?(Array)
+    }
+    self
+  end
+ 
+end
 
 module Giact
   
@@ -80,6 +96,8 @@ module Giact
   end
 end
 
+require File.join(directory, 'giact', 'cancel_recurring_check_list')
+require File.join(directory, 'giact', 'recurring_check_list')
 require File.join(directory, 'giact', 'transaction_result')
 require File.join(directory, 'giact', 'payment_reply')
 require File.join(directory, 'giact', 'payment_request')

@@ -88,22 +88,44 @@ module Giact
       end
     end
     
-
-
-    def search_transactions(options={})
-      path = case options.keys.first
-      when :order_id
-        "TransactionsByOrderID"
-      when :customer_id
-        "TransactionsByCustomerID"
-      when :name_on_check
-        "TransactionsByNameOnCheck"
-      end
+    # @param [Hash] options method options
+    # @option options [String] :transaction_id Transaction ID to list checks
+    # @option options [String] :order_id Order ID to list checks
+    def recurring_checks(options={})
       
+      path = "/RecurringChecksBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
       options.merge!(:company_id => self.company_id, :token => self.token)
-      options.keys.each {|key| options[key.camelize] = options.delete(key) }
+      options.camelize_keys!
       
-      response = self.class.get(path, :body => options)['string']
+      response = self.class.post(path, :body => options)['string']
+      Giact::RecurringCheckList.from_response(response)
+    end
+    
+    # @param [Hash] options method options
+    # @option options [String] :transaction_id Transaction ID for which to cancel checks
+    # @option options [String] :order_id Order ID for which to cancel checks
+    def cancel_recurring(options={})
+      
+      path = "/CancelRecurringBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
+      options.merge!(:company_id => self.company_id, :token => self.token)
+      options.camelize_keys!
+      
+      response = self.class.post(path, :body => options)['string']
+      Giact::CancelRecurringCheckList.from_response(response)
+    end
+    
+
+    # @param [Hash] options method options
+    # @option options [String] :name_on_check Name on check to search
+    # @option options [String] :customer_id Customer ID to search
+    # @option options [String] :order_id Order ID to search
+    def search_transactions(options={})
+      
+      path = "/TransactionsBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
+      options.merge!(:company_id => self.company_id, :token => self.token)
+      options.camelize_keys!
+      
+      response = self.class.post(path, :body => options)['string']
       Giact::TransactionResult.from_response(response)
     end
     
