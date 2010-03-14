@@ -18,7 +18,6 @@ directory = File.expand_path(File.dirname(__FILE__))
 Hash.send :include, Hashie::HashExtensions
 
 class Hash
- 
   # Converts all of the keys to strings, optionally formatting key name
   def camelize_keys!
     keys.each{|k|
@@ -30,7 +29,6 @@ class Hash
     }
     self
   end
- 
 end
 
 module Giact
@@ -44,8 +42,8 @@ module Giact
     end
   end
 
-  class Unauthorized      < StandardError; end
-  class InvalidRequest    < GiactError; end
+  class Unauthorized   < StandardError; end
+  class InvalidRequest < GiactError;    end
   
   # config/initializers/giact.rb (for instance)
   # 
@@ -56,43 +54,19 @@ module Giact
   # end
   def self.configure
     yield self
-    
-    Giact.company_id = company_id
-    Giact.username = username
-    Giact.password = password
     true
-  end
-  
-  def self.company_id
-    @company_id
-  end
-  
-  def self.company_id=(company_id)
-    @company_id = company_id
-  end
-  
-  def self.username
-    @username
-  end
-  
-  def self.username=(username)
-    @username = username
-  end
-  
-  def self.password
-    @password
-  end
-  
-  def self.password=(password)
-    @password = password
   end
   
   def self.test_mode?
     @test_mode || false
   end
   
-  def self.test_mode=(test_mode)
-    @test_mode = test_mode
+  class << self
+    attr_accessor :company_id
+    attr_accessor :username
+    attr_accessor :password
+    attr_accessor :gateway
+    attr_accessor :test_mode
   end
 end
 
