@@ -6,12 +6,14 @@ require 'activesupport'
 gem 'hashie', '~> 0.1.3'
 require 'hashie'
 
-gem 'httparty', '>= 0.5.0'
-require 'httparty'
+# gem 'httparty', '>= 0.5.0'
+# require 'httparty'
 
 gem 'validatable', '~> 1.6.7'
 require 'validatable'
 
+gem 'weary', '>= 0.7.2'
+require 'weary'
 
 directory = File.expand_path(File.dirname(__FILE__))
 
@@ -69,6 +71,8 @@ module Giact
     attr_accessor :test_mode
   end
 end
+
+require File.join(directory, 'giact', 'request')
 
 require File.join(directory, 'giact', 'cancel_recurring_check_list')
 require File.join(directory, 'giact', 'recurring_check_list')
