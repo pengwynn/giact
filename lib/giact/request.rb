@@ -21,9 +21,9 @@ module Giact
 		end
 		
 		# we have to use our own parser due to Weary's :format option mingling with the req.url
-		def self.parse(response, key=nil)
+		def self.parse(response, key="string")
 			res = Crack::XML.parse(response.body)
-			unless key.nil? && res[key]
+			unless key.empty? && res[key]
 				res[key]
 			else
 				res
@@ -35,7 +35,7 @@ module Giact
 			self.class.request(operation, params)
 		end
 
-		def parse(response, key=nil)
+		def parse(response, key="string")
 			self.class.parse(response, key)
 		end
 	end

@@ -16,7 +16,7 @@ module Giact
     # @return [String] authentication token
     def login
 			response = request("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
-      if auth_token = parse(response, "string")
+      if auth_token = parse(response)
         @token = auth_token
       else
         raise Giact::Unauthorized.new(response.body)
@@ -39,7 +39,7 @@ module Giact
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) unless payment_request.valid?
       
       response = self.class.request("SinglePayment", payment_request.to_request_hash).perform
-      if reply = parse(response, 'string')
+      if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
         raise response.body
@@ -54,8 +54,8 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::RecurringPaymentRequest) or not payment_request.valid?
       
-      response = self.class.post("/RecurringPayments", :body => payment_request.to_request_hash)
-      if reply = response['string']
+      response = self.class.request("RecurringPayments", payment_request.to_request_hash).perform
+      if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
         
@@ -70,8 +70,8 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::InstallmentPaymentRequest) or not payment_request.valid?
       
-      response = self.class.post("/InstallmentsPayments", :body => payment_request.to_request_hash)
-      if reply = response['string']
+      response = self.class.request("InstallmentsPayments", payment_request.to_request_hash).perform
+      if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
         
@@ -83,12 +83,12 @@ module Giact
     # @option options [String] :order_id Order ID to list checks
     def recurring_checks(options={})
       
-      path = "/RecurringChecksBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
+      path = "RecurringChecksBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.post(path, :body => options)['string']
-      Giact::RecurringCheckList.from_response(response)
+      response = self.class.request(path, options).perform
+      Giact::RecurringCheckList.from_response(parse(response))
     end
     
     # @param [Hash] options method options
@@ -96,12 +96,12 @@ module Giact
     # @option options [String] :order_id Order ID for which to cancel checks
     def cancel_recurring(options={})
       
-      path = "/CancelRecurringBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
+      path = "CancelRecurringBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.post(path, :body => options)['string']
-      Giact::CancelRecurringCheckList.from_response(response)
+      response = self.class.request(path, options).perform
+      Giact::CancelRecurringCheckList.from_response(parse(response))
     end
     
 

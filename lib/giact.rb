@@ -2,7 +2,7 @@ require 'rubygems'
 require 'time'
 
 gem 'activesupport', '~> 2.3.2'
-require 'activesupport'
+require 'active_support'
 
 gem 'hashie', '~> 0.1.3'
 require 'hashie'

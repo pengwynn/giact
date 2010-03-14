@@ -23,182 +23,182 @@ class TestGiact < Test::Unit::TestCase
         @client.token
       end
     end
-		
-    context "when processing single payments" do
-        setup do
-          @request = Giact::PaymentRequest.new({
-            :customer_id => 'C1234',
-            :order_id => 'O1234',
-            :name_on_check => 'John Doe',
-            :address_line_1 => '1313 Mockingbird Lane',
-            :address_line_2 => 'Monroe, LA 71203',
-            :address_line_3 => 'ph. (318) 867-5309',
-            :name_of_bank => 'Ouachita National Bank',
-            :routing_number => '123456789',
-            :account_number => '990009773',
-            :check_number => 4003,
-            :amount => 75.00
-          })
-          
-          stub_post("/Login", "login.xml")
-        end
-        
-        should "raise an error if request is invalid" do
-          assert_raise Giact::InvalidRequest do
-            @request.check_number = nil
-            result = @client.single_payment(@request)
-          end
-        end
     
-        should "process single payments" do
-          stub_post("/SinglePayment", "payment_pass.xml")
+    context "when processing single payments" do
+      setup do
+        @request = Giact::PaymentRequest.new({
+          :customer_id => 'C1234',
+          :order_id => 'O1234',
+          :name_on_check => 'John Doe',
+          :address_line_1 => '1313 Mockingbird Lane',
+          :address_line_2 => 'Monroe, LA 71203',
+          :address_line_3 => 'ph. (318) 867-5309',
+          :name_of_bank => 'Ouachita National Bank',
+          :routing_number => '123456789',
+          :account_number => '990009773',
+          :check_number => 4003,
+          :amount => 75.00
+        })
+        
+        stub_post("/Login", "login.xml")
+      end
+      
+      should "raise an error if request is invalid" do
+        assert_raise Giact::InvalidRequest do
+          @request.check_number = nil
           result = @client.single_payment(@request)
-          
-          result.transaction_id.should == 1889756
-          result.error?.should == false
-          result.pass?.should == true
-          result.details.should == 'Pass AV'
-          result.code.should == '1111'
+        end
+      end
+  
+      should "process single payments" do
+        stub_post("/SinglePayment", "payment_pass.xml")
+        result = @client.single_payment(@request)
+        
+        result.transaction_id.should == 1889756
+        result.error?.should == false
+        result.pass?.should == true
+        result.details.should == 'Pass AV'
+        result.code.should == '1111'
+      end
+    end
+    
+    context "when processing recurring payments" do
+      setup do
+        @request = Giact::RecurringPaymentRequest.new({
+          :customer_id => 'C1234',
+          :order_id => 'O1234',
+          :name_on_check => 'John Doe',
+          :address_line_1 => '1313 Mockingbird Lane',
+          :address_line_2 => 'Monroe, LA 71203',
+          :address_line_3 => 'ph. (318) 867-5309',
+          :name_of_bank => 'Ouachita National Bank',
+          :routing_number => '123456789',
+          :account_number => '990009773',
+          :check_number => 4003,
+          :amount => 75.00,
+          :recurring_amount => 24.95,
+          :frequency_type => :monthly,
+          :recurring_start_date => Time.now
+        })
+        
+        stub_post("/Login", "login.xml")
+      end
+      
+      should "raise an error if request is invalid" do
+        assert_raise Giact::InvalidRequest do
+          @request.recurring_amount = nil
+          result = @client.single_payment(@request)
         end
       end
       
-      # context "when processing recurring payments" do
-      #   setup do
-      #     @request = Giact::RecurringPaymentRequest.new({
-      #       :customer_id => 'C1234',
-      #       :order_id => 'O1234',
-      #       :name_on_check => 'John Doe',
-      #       :address_line_1 => '1313 Mockingbird Lane',
-      #       :address_line_2 => 'Monroe, LA 71203',
-      #       :address_line_3 => 'ph. (318) 867-5309',
-      #       :name_of_bank => 'Ouachita National Bank',
-      #       :routing_number => '123456789',
-      #       :account_number => '990009773',
-      #       :check_number => 4003,
-      #       :amount => 75.00,
-      #       :recurring_amount => 24.95,
-      #       :frequency_type => :monthly,
-      #       :recurring_start_date => Time.now
-      #     })
-      #     
-      #     stub_post("/Login", "login.xml")
-      #   end
-      #   
-      #   should "raise an error if request is invalid" do
-      #     assert_raise Giact::InvalidRequest do
-      #       @request.recurring_amount = nil
-      #       result = @client.single_payment(@request)
-      #     end
-      #   end
-      #   
-      #   should "raise an error if frequency type is not supported" do
-      #     assert_raise Giact::InvalidRequest do
-      #       @request.frequency_type = :fortnightly
-      #       result = @client.single_payment(@request)
-      #     end
-      #   end
-      #   
-      #   should "process recurring payments" do
-      #     stub_post("/RecurringPayments", "payment_pass.xml")
-      #     result = @client.recurring_payments(@request)
-      #     
-      #     result.transaction_id.should == 1889756
-      #     result.error?.should == false
-      #     result.pass?.should == true
-      #     result.details.should == 'Pass AV'
-      #     result.code.should == '1111'
-      #   end
-      # end
-  #   
-  #   context "when processing installment payments" do
-  #     setup do
-  #       @request = Giact::InstallmentPaymentRequest.new({
-  #         :customer_id => 'C1234',
-  #         :order_id => 'O1234',
-  #         :name_on_check => 'John Doe',
-  #         :address_line_1 => '1313 Mockingbird Lane',
-  #         :address_line_2 => 'Monroe, LA 71203',
-  #         :address_line_3 => 'ph. (318) 867-5309',
-  #         :name_of_bank => 'Ouachita National Bank',
-  #         :routing_number => '123456789',
-  #         :account_number => '990009773',
-  #         :check_number => 4003,
-  #         :amount => 75.00,
-  #         :installment_amount => 24.95,
-  #         :installment_count => 4,
-  #         :installments_start_date => 3.months.from_now
-  #       })
-  #       
-  #       stub_post("/Login", "login.xml")
-  #     end
-  #     
-  #     should "raise an error if request is invalid" do
-  #       assert_raise Giact::InvalidRequest do
-  #         @request.installment_amount = nil
-  #         result = @client.installments_payments(@request)
-  #       end
-  #     end
-  #     
-  #     should "process installments payments" do
-  #       stub_post("/InstallmentsPayments", "payment_pass.xml")
-  #       result = @client.installments_payments(@request)
-  #       
-  #       result.transaction_id.should == 1889756
-  #       result.error?.should == false
-  #       result.pass?.should == true
-  #       result.details.should == 'Pass AV'
-  #       result.code.should == '1111'
-  #     end
-  #     
-  #   end
-  #   
-  #   context "when in test mode" do
-  #     setup do
-  #       Giact.test_mode = true
-  #     end
-  #     
-  #     should "persist test flag" do
-  #       Giact.test_mode?.should == true
-  #     end
-  # 
-  #     should "pass test flag to payment methods" do
-  #       payment_request = Giact::PaymentRequest.new
-  #       payment_request.test?.should == true
-  #     end
-  #   end
-  #   
-  #   should "list recurring checks for an order ID" do
-  #     stub_post("/RecurringChecksByOrderID", "recurring_check_list.xml")
-  #     results = @client.recurring_checks(:order_id => "1234")
-  #     results.size.should == 2
-  #     results.first.check_id.should == 1001
-  #     results.first.check_date.year.should == 2010
-  #     results.last.returned?.should == true
-  #   end
-  # 
-  #   should "list recurring checks for a transaction ID" do
-  #     stub_post("/RecurringChecksByTransactionID", "recurring_check_list.xml")
-  #     results = @client.recurring_checks(:transaction_id => "1234")
-  #     results.size.should == 2
-  #     results.first.check_id.should == 1001
-  #     results.first.check_date.year.should == 2010
-  #     results.last.returned?.should == true
-  #   end
-  # 
-  #   should "cancel future recurring checks by order ID" do
-  #     stub_post("/CancelRecurringByOrderID", "cancel_recurring_check_list.xml")
-  #     results = @client.cancel_recurring(:order_id => "1234")
-  #     results.first.cancelled?.should == true
-  #     results.last.cancelled?.should == false
-  #     results.last.details.should == "No transactions were found for OrderID"
-  #   end
-  # 
-  #   should "cancel future recurring checks by transaction ID" do
-  #     stub_post("/CancelRecurringByTransactionID", "cancel_recurring_check_list.xml")
-  #     results = @client.cancel_recurring(:transaction_id => "1234")
-  #     results.first.cancelled?.should == true
-  #     results.last.cancelled?.should == false
-  #   end
+      should "raise an error if frequency type is not supported" do
+        assert_raise Giact::InvalidRequest do
+          @request.frequency_type = :fortnightly
+          result = @client.single_payment(@request)
+        end
+      end
+      
+      should "process recurring payments" do
+        stub_post("/RecurringPayments", "payment_pass.xml")
+        result = @client.recurring_payments(@request)
+        
+        result.transaction_id.should == 1889756
+        result.error?.should == false
+        result.pass?.should == true
+        result.details.should == 'Pass AV'
+        result.code.should == '1111'
+      end
+    end
+    
+    context "when processing installment payments" do
+      setup do
+        @request = Giact::InstallmentPaymentRequest.new({
+          :customer_id => 'C1234',
+          :order_id => 'O1234',
+          :name_on_check => 'John Doe',
+          :address_line_1 => '1313 Mockingbird Lane',
+          :address_line_2 => 'Monroe, LA 71203',
+          :address_line_3 => 'ph. (318) 867-5309',
+          :name_of_bank => 'Ouachita National Bank',
+          :routing_number => '123456789',
+          :account_number => '990009773',
+          :check_number => 4003,
+          :amount => 75.00,
+          :installment_amount => 24.95,
+          :installment_count => 4,
+          :installments_start_date => 3.months.from_now
+        })
+        
+        stub_post("/Login", "login.xml")
+      end
+      
+      should "raise an error if request is invalid" do
+        assert_raise Giact::InvalidRequest do
+          @request.installment_amount = nil
+          result = @client.installments_payments(@request)
+        end
+      end
+      
+      should "process installments payments" do
+        stub_post("/InstallmentsPayments", "payment_pass.xml")
+        result = @client.installments_payments(@request)
+        
+        result.transaction_id.should == 1889756
+        result.error?.should == false
+        result.pass?.should == true
+        result.details.should == 'Pass AV'
+        result.code.should == '1111'
+      end
+      
+    end
+ 
+    context "when in test mode" do
+      setup do
+        Giact.test_mode = true
+      end
+    
+      should "persist test flag" do
+        Giact.test_mode?.should == true
+      end
+      
+      should "pass test flag to payment methods" do
+        payment_request = Giact::PaymentRequest.new
+        payment_request.test?.should == true
+      end
+    end
+    
+    should "list recurring checks for an order ID" do
+      stub_post("/RecurringChecksByOrderID", "recurring_check_list.xml")
+      results = @client.recurring_checks(:order_id => "1234")
+      results.size.should == 2
+      results.first.check_id.should == 1001
+      results.first.check_date.year.should == 2010
+      results.last.returned?.should == true
+    end
+  
+    should "list recurring checks for a transaction ID" do
+      stub_post("/RecurringChecksByTransactionID", "recurring_check_list.xml")
+      results = @client.recurring_checks(:transaction_id => "1234")
+      results.size.should == 2
+      results.first.check_id.should == 1001
+      results.first.check_date.year.should == 2010
+      results.last.returned?.should == true
+    end
+  
+    should "cancel future recurring checks by order ID" do
+      stub_post("/CancelRecurringByOrderID", "cancel_recurring_check_list.xml")
+      results = @client.cancel_recurring(:order_id => "1234")
+      results.first.cancelled?.should == true
+      results.last.cancelled?.should == false
+      results.last.details.should == "No transactions were found for OrderID"
+    end
+  
+    should "cancel future recurring checks by transaction ID" do
+      stub_post("/CancelRecurringByTransactionID", "cancel_recurring_check_list.xml")
+      results = @client.cancel_recurring(:transaction_id => "1234")
+      results.first.cancelled?.should == true
+      results.last.cancelled?.should == false
+    end
   # 
   #   should_eventually "list installment checks by order ID" do
   # 
