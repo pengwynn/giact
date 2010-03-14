@@ -34,7 +34,7 @@ module Giact
       self[:test] = Giact.test_mode?
       self[:amount] = "%.2f" % self[:amount]
       self.each do |key, value|
-        h[key.camelize.gsub(/Id$/, "ID")] = value
+        h[key.to_s.camelize.gsub(/Id$/, "ID")] = value
       end
       h
     end

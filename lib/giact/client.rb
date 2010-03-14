@@ -1,8 +1,6 @@
 module Giact
   class Client < Giact::Request
     attr_reader :company_id
-    attr_reader :username # only for testing
-    attr_reader :password # only for testing
         
     # @param [Hash] options method options
     # @option options [Integer] :gateway Number (1-3) of gateway server to use
@@ -16,19 +14,9 @@ module Giact
     # Return an authentication token 
     #
     # @return [String] authentication token
-    # def login
-      # response = self.class.post("/Login", :body => {:companyID => @company_id, :un => @username, :pw => @password})
-      # if auth_token = response['string']
-      #   @token = auth_token
-      # else
-      #   raise Giact::Unauthorized.new(response.body)
-      #   
-      # end
-    # end
-    
     def login
-      response = super(:companyID => @company_id, :un => @username, :pw => @password).perform
-      if auth_token = response.parse["string"]
+			response = request("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
+      if auth_token = parse(response, "string")
         @token = auth_token
       else
         raise Giact::Unauthorized.new(response.body)
@@ -50,8 +38,8 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) unless payment_request.valid?
       
-      response = self.class.post("/SinglePayment", :body => payment_request.to_request_hash)
-      if reply = response['string']
+      response = self.class.request("SinglePayment", payment_request.to_request_hash).perform
+      if reply = parse(response, 'string')
         Giact::PaymentReply.new(reply)
       else
         raise response.body
@@ -129,10 +117,6 @@ module Giact
       
       response = self.class.post(path, :body => options)['string']
       Giact::TransactionResult.from_response(response)
-    end
-    
-    
-
-  
+    end  
   end
 end
