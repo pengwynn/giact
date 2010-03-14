@@ -111,12 +111,12 @@ module Giact
     # @option options [String] :order_id Order ID to search
     def search_transactions(options={})
       
-      path = "/TransactionsBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
+      path = "TransactionsBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.post(path, :body => options)['string']
-      Giact::TransactionResult.from_response(response)
+      response = self.class.request(path, options).perform
+      Giact::TransactionResult.from_response(parse(response))
     end  
   end
 end
