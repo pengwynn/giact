@@ -1,15 +1,6 @@
 module Giact
   class Client < Giact::Request
     attr_reader :company_id
-        
-    # @param [Hash] options method options
-    # @option options [Integer] :gateway Number (1-3) of gateway server to use
-    # @option options [String] :company_id Your Giact company ID
-    # @option options [String] :username Your Giact API username
-    # @option options [String] :password Your Giact API password
-    def initialize(options={})
-      super
-    end
     
     # Return an authentication token 
     #

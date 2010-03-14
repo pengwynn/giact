@@ -1,6 +1,11 @@
 module Giact
 	class Request < ::Weary::Base
 	  
+	  # @param [Hash] options method options
+    # @option options [Integer] :gateway Number (1-3) of gateway server to use
+    # @option options [String] :company_id Your Giact company ID
+    # @option options [String] :username Your Giact API username
+    # @option options [String] :password Your Giact API password
 	  def initialize(options={})
 	    @company_id ||= Giact.company_id ||= options[:company_id]
 	    @username ||= Giact.username ||= options[:username]
@@ -8,12 +13,7 @@ module Giact
       @gateway ||= Giact.gateway ||= options[:gateway]
 	  end
 	  
-		format :xml
-	
-	  def self.build_uri(method)
-      "https://gatewaydtx#{@gateway}.giact.com/RealTime/POST/RealTimeChecks.asmx/#{method}"
-    end
-	  
+	  # Our base level request method.
 		def self.request(operation, params={})
 			Weary.request("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}", :post) do |req|
 				req.with = params unless params.blank?

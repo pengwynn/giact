@@ -7,9 +7,6 @@ require 'active_support'
 gem 'hashie', '~> 0.1.3'
 require 'hashie'
 
-# gem 'httparty', '>= 0.5.0'
-# require 'httparty'
-
 gem 'validatable', '~> 1.6.7'
 require 'validatable'
 
