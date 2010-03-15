@@ -1,5 +1,5 @@
 module Giact
-  class Request < ::Weary::Base
+  class Request
     
     # @param [Hash] options method options
     # @option options [Integer] :gateway Number (1-3) of gateway server to use
@@ -15,7 +15,7 @@ module Giact
     
     # Our base level request method.
     def self.request(operation, params={})
-      Weary.request("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}", :post) do |req|
+      Weary.post("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}") do |req|
         req.with = params unless params.blank?
       end
     end
