@@ -6,7 +6,7 @@ module Giact
     #
     # @return [String] authentication token
     def login
-			response = request("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
+      response = request("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
       if auth_token = parse(response)
         @token = auth_token
       else
