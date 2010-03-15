@@ -6,7 +6,7 @@ module Giact
     #
     # @return [String] authentication token
     def login
-      response = request("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
+      response = self.class.post("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
       if auth_token = parse(response)
         @token = auth_token
       else
@@ -29,7 +29,7 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) unless payment_request.valid?
       
-      response = self.class.request("SinglePayment", payment_request.to_request_hash).perform
+      response = self.class.post("SinglePayment", payment_request.to_request_hash).perform
       if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
@@ -45,7 +45,7 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::RecurringPaymentRequest) or not payment_request.valid?
       
-      response = self.class.request("RecurringPayments", payment_request.to_request_hash).perform
+      response = self.class.post("RecurringPayments", payment_request.to_request_hash).perform
       if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
@@ -61,7 +61,7 @@ module Giact
       payment_request.merge!(:company_id => self.company_id, :token => self.token)
       raise Giact::InvalidRequest.new(payment_request.errors.full_messages) if not payment_request.is_a?(Giact::InstallmentPaymentRequest) or not payment_request.valid?
       
-      response = self.class.request("InstallmentsPayments", payment_request.to_request_hash).perform
+      response = self.class.post("InstallmentsPayments", payment_request.to_request_hash).perform
       if reply = parse(response)
         Giact::PaymentReply.new(reply)
       else
@@ -78,7 +78,7 @@ module Giact
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.request(path, options).perform
+      response = self.class.post(path, options).perform
       Giact::RecurringCheckList.from_response(parse(response))
     end
     
@@ -91,7 +91,7 @@ module Giact
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.request(path, options).perform
+      response = self.class.post(path, options).perform
       Giact::CancelRecurringCheckList.from_response(parse(response))
     end
     
@@ -106,7 +106,7 @@ module Giact
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!
       
-      response = self.class.request(path, options).perform
+      response = self.class.post(path, options).perform
       Giact::TransactionResult.from_response(parse(response))
     end  
   end

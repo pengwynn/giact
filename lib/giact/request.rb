@@ -14,7 +14,7 @@ module Giact
     end
     
     # Our base level request method.
-    def self.request(operation, params={})
+    def self.post(operation, params={})
       Weary.post("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}") do |req|
         req.with = params unless params.blank?
       end
@@ -31,8 +31,8 @@ module Giact
     end
     
     # public methods
-    def request(operation, params={})
-      self.class.request(operation, params)
+    def post(operation, params={})
+      self.class.post(operation, params)
     end
 
     def parse(response, key="string")
