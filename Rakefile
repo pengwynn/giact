@@ -11,7 +11,7 @@ begin
     gem.homepage = "http://github.com/pengwynn/giact"
     gem.authors = ["Wynn Netherland"]
     gem.add_dependency('hashie', '~> 0.1.3')
-    gem.add_dependency('httparty', '~> 0.4.5')
+    gem.add_dependency('weary', '>= 0.7.2')
     gem.add_dependency('activesupport', '>= 2.3')
 
     gem.add_development_dependency('thoughtbot-shoulda', '>= 2.10.1')
