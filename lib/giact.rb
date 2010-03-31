@@ -72,17 +72,29 @@ end
 
 require File.join(directory, 'giact', 'request')
 
-require File.join(directory, 'giact', 'cancel_reply')
-require File.join(directory, 'giact', 'installments_list')
-require File.join(directory, 'giact', 'recurring_check_list')
-require File.join(directory, 'giact', 'transaction_result')
-require File.join(directory, 'giact', 'payment_reply')
-require File.join(directory, 'giact', 'payment_request')
-require File.join(directory, 'giact', 'installment_payment_request')
-require File.join(directory, 'giact', 'recurring_payment_request')
+require File.join(directory, 'giact', 'request', 'payment')
+require File.join(directory, 'giact', 'request', 'recurring_payment')
+require File.join(directory, 'giact', 'request', 'installment_payment')
+require File.join(directory, 'giact', 'request', 'refund')
+require File.join(directory, 'giact', 'request', 'partial_refund')
+require File.join(directory, 'giact', 'request', 'daily_stats')
+require File.join(directory, 'giact', 'request', 'range_report')
 
-require File.join(directory, 'giact', 'refund_reply')
-require File.join(directory, 'giact', 'refund_request')
-require File.join(directory, 'giact', 'partial_refund_request')
+require File.join(directory, 'giact', 'reply', 'payment')
+require File.join(directory, 'giact', 'reply', 'recurring')
+require File.join(directory, 'giact', 'reply', 'installments')
+require File.join(directory, 'giact', 'reply', 'cancel')
+require File.join(directory, 'giact', 'reply', 'refund')
+require File.join(directory, 'giact', 'reply', 'search')
+
+require File.join(directory, 'giact', 'reply', 'daily', 'summary')
+require File.join(directory, 'giact', 'reply', 'daily', 'deposits')
+require File.join(directory, 'giact', 'reply', 'daily', 'returns')
+require File.join(directory, 'giact', 'reply', 'daily', 'refunds')
+require File.join(directory, 'giact', 'reply', 'daily', 'errors_or_scrubs')
+
+require File.join(directory, 'giact', 'reply', 'report', 'returns')
+require File.join(directory, 'giact', 'reply', 'report', 'refunds')
+
 
 require File.join(directory, 'giact', 'client')

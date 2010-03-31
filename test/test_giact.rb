@@ -420,7 +420,7 @@ class TestGiact < Test::Unit::TestCase
   context "when parsing transaction search results" do
     should "parse a single row" do
       row = "1890090|2010-01-15 14:49:41Z|False|True|Pass AV|C1234|O1235|Wonkawerks|1313 MOCKINGBIRD LANE|DALLAS, TX  76227|PH. 214-295-7561|Bank of America|320113000|006888995646|2350|5.00|True|5.00|Monthly|2010-02-15 00:00:00Z|False||||False||||False||||||||||||"
-      result = Giact::TransactionResult.new(row)
+      result = Giact::SearchReply.new(row)
       result.transaction_id.should == 1890090
       result.name_on_check.should == "Wonkawerks"
       result.timestamp.year.should == 2010
@@ -429,7 +429,7 @@ class TestGiact < Test::Unit::TestCase
   
     should "parse multiple rows" do
       text = Crack::XML.parse(fixture_file("transaction_search.xml"))
-      results = Giact::TransactionResult.from_response(text['string'])
+      results = Giact::SearchReply.from_response(text['string'])
       results.size.should == 4
       results.first.transaction_id.should == 1889756
       results.last.routing_number.should == 320113000

@@ -1,5 +1,5 @@
 module Giact
-  class TransactionResult   
+  class SearchReply   
     attr_reader :transaction_id
     attr_reader :timestamp
     attr_reader :error
@@ -107,7 +107,7 @@ module Giact
     end
     
     def self.from_response(response)
-      response.split(/\n/).map{|line| Giact::TransactionResult.new(line)}
+      response.split(/\n/).map{|line| Giact::SearchReply.new(line)}
     end
   end
 end

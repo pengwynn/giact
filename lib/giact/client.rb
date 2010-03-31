@@ -83,7 +83,7 @@ module Giact
       request = {:company_id => self.company_id, :token => self.token, "#{type}_id".to_sym => id}.camelize_keys!
       
       response = post("RecurringChecksBy#{type.to_s.capitalize!}ID", request).perform
-      Giact::RecurringCheckList.from_response(parse(response))
+      Giact::RecurringReply.from_response(parse(response))
     end
     
     def list_recurring_by_order(id)
@@ -124,7 +124,7 @@ module Giact
       request = {:company_id => self.company_id, :token => self.token, "#{type}_id".to_sym => id}.camelize_keys!
       
       response = post("InstallmentChecksBy#{type.to_s.capitalize!}ID", request).perform
-      Giact::InstallmentsList.from_response(parse(response))
+      Giact::InstallmentsReply.from_response(parse(response))
     end
     
     def list_installments_by_order(id)
@@ -192,33 +192,51 @@ module Giact
     end
     
     
-    def daily_summary(date)
+    def daily_request(type, date)
+      request = Giact::DailyStatsRequest.new(:company_id => self.company_id, :token => self.token, :date => date)
       
+      response = post("Daily#{type.capitalize!}", request.to_request).perform
+      parse(response)
+    end
+    
+    def daily_summary(date)
+      Giact::DailySummaryReply.new(daily_request("summary", date))
     end
     
     def daily_deposits(date)
-      
+      Giact::DailyDepositsReply.new(daily_request("deposits", date))
     end
     
     def daily_returns(date)
-      
+      Giact::DailyReturnsReply.new(daily_request("returns", date))
     end
     
     def daily_refunds(date)
-      
+      Giact::DailyRefundsReply.new(daily_request("refunds", date))
     end
     
     def daily_scrubs(date)
-      
+      Giact::DailyErrorsOrScrubsReply.new(daily_request("scrubs", date))
+    end
+    
+    def daily_errors(date)
+      Giact::DailyErrorsOrScrubsReply.new(daily_request("errors", date))
     end
     
     
-    def range_returns(start, finish)
+    def range_request(type, start, finish)
+      request = Giact::RangeReportRequest.new(:company_id => self.company_id, :token => self.token, :start_date => start, :end_date => finish)
       
+      response = post("Range#{type.capitalize!}", request.to_request).perform
+      parse(response)
+    end
+    
+    def range_returns(start, finish)
+      Giact::RangeReturnsReply.from_response(range_request("returns", start, finish))
     end
     
     def range_refunds(start, finish)
-      
+      Giact::RangeRefundsReply.from_response(range_request("refunds", start, finish))
     end
     
     
@@ -233,7 +251,7 @@ module Giact
       options.camelize_keys!
       
       response = post(path, options).perform
-      Giact::TransactionResult.from_response(parse(response))
+      Giact::SearchReply.from_response(parse(response))
     end  
   end
 end
