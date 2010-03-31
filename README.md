@@ -16,8 +16,8 @@ API calls left to implement:
 * cancel a transaction by transaction ID that has not been batched
 * list daily deposits for a given date
 * list errored transactions for a given date
-* list checks refunded for a given date
 * list checks returned for a given date
+* list checks refunded for a given date
 * list transactions scrubbed for a given date
 * return a daily summary
 * list installment checks by order ID

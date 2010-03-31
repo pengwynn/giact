@@ -1,4 +1,4 @@
-# Giact API #
+# Giact Api #
 
 ## Authentication ##
 	=> login
@@ -6,82 +6,83 @@
 
 
 ## Single Payment ##
-	=> singlePayment(options)
+	=> single_payment(options)
 
 
-## Create a new recurring payment ##
-	=> recurringPayment(options)
+## Create a New Recurring Payment ##
+	=> recurring_payment(options)
+		=> recurring_payments < recurring_payment
 
-### List recurring payment checks by an order or transaction ID ###
-	=> listRecurringBy(key, id)
-			=> listRecurringByOrder(id) < listRecurringBy
-			=> listRecurringByTransation(id) < listRecurringBy
+### List Recurring Payment Checks by an Order or Transaction Id ###
+	=> list_recurring_by(key, id)
+			=> list_recurring_by_order(id) < list_recurring_by
+			=> list_recurring_by_transation(id) < list_recurring_by
 
-### Cancel future recurring payment checks by order or transaction ID ###
-	=> cancelRecurringBy(key, id)
-			=> cancelRecurringByOrder(id) < cancelRecurringBy
-			=> cancelRecurringByTransaction(id) < cancelRecurringBy
-
-
-## Create a new installment based payment, with initial amount and number of installments ##
-	=> installmentPayment(options)
-
-### List installment checks by order or transaction ID ###
-	=> listInstallmentsBy(key, id)
-			=> listInstallmentsByOrder(id) < listInstallmentsBy
-			=> listInstallmentsByTransaction(id) < listInstallmentsBy
-
-### Cancel future installment checks by order or transaction ID ###
-	=> cancelInstallmentsBy(key, id)
-			=> cancelInstallmentsByOrder(id) < cancelInstallmentsBy
- 			=> cancelInstallmentsByTransaction(id) < cancelInstallmentsBy
+### Cancel Future Recurring Payment Checks by Order or Transaction Id ###
+	=> cancel_recurring_by(key, id)
+			=> cancel_recurring_by_order(id) < cancel_recurring_by
+			=> cancel_recurring_by_transaction(id) < cancel_recurring_by
 
 
-## Cancel a transaction prior to batching by order or transaction ID ##
-	=> cancelTransactionBy(key, id)
-			=> cancelTransactionByOrder(id) < cancelTransactionBy
-			=> cancelTransactionByTransaction(id) < cancelTransactionBy
+## Create a New Installment Based Payment, With Initial Amount and Number of Installments ##
+	=> installment_payment(options)
+
+### List Installment Checks by Order or Transaction Id ###
+	=> list_installments_by(key, id)
+			=> list_installments_by_order(id) < list_installments_by
+			=> list_installments_by_transaction(id) < list_installments_by
+
+### Cancel Future Installment Checks by Order or Transaction Id ###
+	=> cancel_installments_by(key, id)
+			=> cancel_installments_by_order(id) < cancel_installments_by
+ 			=> cancel_installments_by_transaction(id) < cancel_installments_by
+
+
+## Cancel a Transaction Prior to Batching by Order or Transaction Id ##
+	=> cancel_transaction_by(key, id)
+			=> cancel_transaction_by_order(id) < cancel_transaction_by
+			=> cancel_transaction_by_transaction(id) < cancel_transaction_by
 
 ## Statistical Reports ##
-### List the summary for a given date ###
-	=> dailySummary(date)
+### List the Summary for a Given Date ###
+	=> daily_summary(date)
 
-### List daily deposits for a given date ###
-	=> dailyDeposits(date)
+### List Daily Deposits for a Given Date ###
+	=> daily_deposits(date)
 
-### List transactions scrubbed for a given date ###
-	=> dailyScrubs(date)
+### List Transactions Scrubbed for a Given Date ###
+	=> daily_scrubs(date)
 
-### List errored transactions for a given date ###
-	=> dailyErrors(date)
+### List Errored Transactions for a Given Date ###
+	=> daily_errors(date)
 
-### List checks returned for a given date ###
-	=> dailyReturns(date)
+### List Checks Returned for a Given Date ###
+	=> daily_returns(date)
 
-### List checks refunded for a given date ###
-	=> dailyRefunds(date)
+### List Checks Refunded for a Given Date ###
+	=> daily_refunds(date)
 
-### List checks returned for a given date range ###
-	=> rangeReturns(start, end)
+### List Checks Returned for a Given Date Range ###
+	=> range_returns(start, end)
 
-### List checks refunded for a given date range ###
-	=> rangeRefunds(start, end)
+### List Checks Refunded for a Given Date Range ###
+	=> range_refunds(start, end)
 
 ## Refunds ##
 
-### Request a refund by order or transaction ID ###
-	=> refundBy(key, id)
-			=> refundByOrder(id) < refundBy
-			=> refundByTransaction(id) < refundBy
+### Request a Refund by Order or Transaction Id ###
+	=> refund_by(key, id)
+			=> refund_by_order(id) < refund_by
+			=> refund_by_transaction(id) < refund_by
 
-### request a partial refund by order or transaction ID ###
-	=> partialRefundBy(key, id)
-			=> partialRefundByOrder(id) < partialRefundBy
-			=> partialRefundByTransaction(id) < partialRefundBy
+### Request a Partial Refund by Order or Transaction Id ###
+	=> partial_refund_by(key, id)
+			=> partial_refund_by_order(id) < partial_refund_by
+			=> partial_refund_by_transaction(id) < partial_refund_by
 
 
 ## Search Transactions ##
-	=> listTransactionsBy(key, id)
-			=> listTransactionsByOrder(id) < listTransactionsBy
-			=> listTransactionsByCustomer(id) < listTransactionsBy
-			=> listTransactionsByNameOnCheck(name) < listTransactionsBy
+	=> list_transactions_by(key, id)
+			=> list_transactions_by_order(id) < list_transactions_by
+			=> list_transactions_by_customer(id) < list_transactions_by
+			=> list_transactions_by_name_on_check(name) < list_transactions_by
