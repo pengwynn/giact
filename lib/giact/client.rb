@@ -244,13 +244,10 @@ module Giact
     # @option options [String] :name_on_check Name on check to search
     # @option options [String] :customer_id Customer ID to search
     # @option options [String] :order_id Order ID to search
-    def search_transactions(options={})
+    def search_transactions(key, value)
+      request = {:company_id => self.company_id, :token => self.token, key.to_sym => value}.camelize_keys!
       
-      path = "TransactionsBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
-      options.merge!(:company_id => self.company_id, :token => self.token)
-      options.camelize_keys!
-      
-      response = post(path, options).perform
+      response = post("TransactionsBy#{key.to_s.camelize.gsub(/Id$/, "ID")}", request).perform
       Giact::SearchReply.from_response(parse(response))
     end  
   end

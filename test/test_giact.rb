@@ -284,7 +284,7 @@ class TestGiact < Test::Unit::TestCase
   # 
     should "search transactions by order ID" do
       stub_post("/TransactionsByOrderID", "transaction_search.xml")
-      results = @client.search_transactions(:order_id => "1234")
+      results = @client.search_transactions("order_id", "1234")
       results.first.transaction_id.should == 1889756
       results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
 
@@ -295,7 +295,7 @@ class TestGiact < Test::Unit::TestCase
 
     should "search transactions by customer ID" do
       stub_post("/TransactionsByCustomerID", "transaction_search.xml")
-      results = @client.search_transactions(:customer_id => "1234")
+      results = @client.search_transactions("customer_id", "1234")
       results.first.transaction_id.should == 1889756
       results.first.address_line_1.should == '1313 MOCKINGBIRD LANE'
 
@@ -306,7 +306,7 @@ class TestGiact < Test::Unit::TestCase
 
     should "search transactions by name on check" do
       stub_post("/TransactionsByNameOnCheck", "transaction_search.xml")
-      results = @client.search_transactions(:name_on_check => "Willy Wonka")
+      results = @client.search_transactions("name_on_check", "Willy Wonka")
       results.first.transaction_id.should == 1889756
       results.first.error?.should == false
       results.first.pass?.should == true
