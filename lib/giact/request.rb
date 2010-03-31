@@ -1,6 +1,7 @@
+require "json/pure"
+
 module Giact
   class Request
-    
     # @param [Hash] options method options
     # @option options [Integer] :gateway Number (1-3) of gateway server to use
     # @option options [String] :company_id Your Giact company ID
@@ -14,6 +15,8 @@ module Giact
     end
     
     # Our base level request method.
+    # @option operation [String] The API method you wish to call
+    # @option params [Mixed] The arguments for the request
     def self.post(operation, params={})
       Weary.post("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}") do |req|
         req.with = params unless params.blank?
@@ -21,12 +24,14 @@ module Giact
     end
     
     # we have to use our own parser due to Weary's :format option mingling with the req.url
-    def self.parse(response, key="string")
+    # @option response [String] The response from a Giact::Request#post
+    # @return [String] The response string
+    def self.parse(response)
       res = Crack::XML.parse(response.body)
-      unless key.empty? && res[key]
-        res[key]
+      unless res.empty? && res.include?("string")
+        res["string"]
       else
-        res
+        false
       end
     end
     
@@ -35,8 +40,8 @@ module Giact
       self.class.post(operation, params)
     end
 
-    def parse(response, key="string")
-      self.class.parse(response, key)
+    def parse(response)
+      self.class.parse(response)
     end
   end
 end
