@@ -1,6 +1,11 @@
 module Giact
   class Client < Giact::Request
     attr_reader :company_id
+    attr_accessor :authorized
+    
+    def authorized?
+      @authorized ||= false
+    end
     
     # Return an authentication token 
     #
@@ -8,9 +13,19 @@ module Giact
     def login
       response = post("Login", :companyID => @company_id, :un => @username, :pw => @password).perform
       if auth_token = parse(response)
+        @authorized = true
         @token = auth_token
       else
         raise Giact::Unauthorized.new(response.body)
+      end
+    end
+    
+    def logout
+      if authorized?
+        response = post("Logout", :companyID => @company_id, :token => @token).perform
+        if parse(response)
+          @authorized = false
+        end
       end
     end
     
@@ -68,7 +83,9 @@ module Giact
         
       end
     end
-    
+
+# Are these methods a little messy?
+
     # @param [Hash] options method options
     # @option options [String] :transaction_id Transaction ID to list checks
     # @option options [String] :order_id Order ID to list checks
@@ -86,7 +103,6 @@ module Giact
     # @option options [String] :transaction_id Transaction ID for which to cancel checks
     # @option options [String] :order_id Order ID for which to cancel checks
     def cancel_recurring(options={})
-      
       path = "CancelRecurringBy#{options.keys.first.to_s.camelize.gsub(/Id$/, "ID")}"
       options.merge!(:company_id => self.company_id, :token => self.token)
       options.camelize_keys!

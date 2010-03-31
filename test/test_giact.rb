@@ -10,6 +10,14 @@ class TestGiact < Test::Unit::TestCase
     should "be able to log in" do
       token = @client.login
       token.should == 'f7edf569-e946-45d0-82b0-5ee44e3c027d'
+      @client.authorized.should == true
+    end
+    
+    should "be able to log out" do
+      @client.logout
+      @client.authorized.should == false
+      # relogin
+      @client.login
     end
     
     should "retreive an auth token implicitly" do
