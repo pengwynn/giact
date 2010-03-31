@@ -16,8 +16,6 @@ class TestGiact < Test::Unit::TestCase
     should "be able to log out" do
       @client.logout
       @client.authorized.should == false
-      # relogin
-      @client.login
     end
     
     should "retreive an auth token implicitly" do
@@ -28,6 +26,7 @@ class TestGiact < Test::Unit::TestCase
     should "raise an error when failing to authenticate" do
       stub_post("/Login", "login_failed.txt")
       assert_raise Giact::Unauthorized do
+        @client.authorized.should == false
         @client.token
       end
     end
@@ -108,7 +107,7 @@ class TestGiact < Test::Unit::TestCase
       
       should "process recurring payments" do
         stub_post("/RecurringPayments", "payment_pass.xml")
-        result = @client.recurring_payments(@request)
+        result = @client.recurring_payment(@request)
         
         result.transaction_id.should == 1889756
         result.error?.should == false
@@ -143,13 +142,13 @@ class TestGiact < Test::Unit::TestCase
       should "raise an error if request is invalid" do
         assert_raise Giact::InvalidRequest do
           @request.installment_amount = nil
-          result = @client.installments_payments(@request)
+          result = @client.installment_payment(@request)
         end
       end
       
       should "process installments payments" do
         stub_post("/InstallmentsPayments", "payment_pass.xml")
-        result = @client.installments_payments(@request)
+        result = @client.installment_payment(@request)
         
         result.transaction_id.should == 1889756
         result.error?.should == false
@@ -177,7 +176,7 @@ class TestGiact < Test::Unit::TestCase
     
     should "list recurring checks for an order ID" do
       stub_post("/RecurringChecksByOrderID", "recurring_check_list.xml")
-      results = @client.recurring_checks(:order_id => "1234")
+      results = @client.list_recurring_by_order("1234")
       results.size.should == 2
       results.first.check_id.should == 1001
       results.first.check_date.year.should == 2010
@@ -186,7 +185,7 @@ class TestGiact < Test::Unit::TestCase
   
     should "list recurring checks for a transaction ID" do
       stub_post("/RecurringChecksByTransactionID", "recurring_check_list.xml")
-      results = @client.recurring_checks(:transaction_id => "1234")
+      results = @client.list_recurring_by_transaction("1234")
       results.size.should == 2
       results.first.check_id.should == 1001
       results.first.check_date.year.should == 2010
@@ -195,7 +194,7 @@ class TestGiact < Test::Unit::TestCase
   
     should "cancel future recurring checks by order ID" do
       stub_post("/CancelRecurringByOrderID", "cancel_recurring_check_list.xml")
-      results = @client.cancel_recurring(:order_id => "1234")
+      results = @client.cancel_recurring_by_order("1234")
       results.first.cancelled?.should == true
       results.last.cancelled?.should == false
       results.last.details.should == "No transactions were found for OrderID"
@@ -203,18 +202,21 @@ class TestGiact < Test::Unit::TestCase
   
     should "cancel future recurring checks by transaction ID" do
       stub_post("/CancelRecurringByTransactionID", "cancel_recurring_check_list.xml")
-      results = @client.cancel_recurring(:transaction_id => "1234")
+      results = @client.cancel_recurring_by_transaction("1234")
       results.first.cancelled?.should == true
       results.last.cancelled?.should == false
     end
-  # 
-  #   should_eventually "list installment checks by order ID" do
-  # 
-  #   end
-  # 
-  #   should_eventually "list installment checks by transaction ID" do
-  # 
-  #   end
+    
+    
+    # should_eventually "list installment checks by order ID" do
+    #   stub_post("/InstallmentChecksByOrderID", "installment_list.xml")
+    #   #results = @client.list_installments_by_order("1234")
+    # end
+    # 
+    # should_eventually "list installment checks by transaction ID" do
+    #   stub_post("/InstallmentChecksByTransactionID", "installment_list.xml")
+    #   #results = @client.list_installments_by_transaction("1234")
+    # end
   # 
   #   should_eventually "cancel future installment checks by order ID" do
   # 
@@ -375,7 +377,7 @@ class TestGiact < Test::Unit::TestCase
   
     should "support amount as float" do
       @payment_request.amount = 30.4
-      @payment_request.to_request_hash['Amount'].should == "30.40"
+      @payment_request.to_request['Amount'].should == "30.40"
     end
   end
   
@@ -401,7 +403,7 @@ class TestGiact < Test::Unit::TestCase
   
     should "support amount as float" do
       @payment_request.amount = 30.4
-      @payment_request.to_request_hash['Amount'].should == "30.40"
+      @payment_request.to_request['Amount'].should == "30.40"
     end
   
     should "require a recurring amount" do

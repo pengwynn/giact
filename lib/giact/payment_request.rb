@@ -29,14 +29,9 @@ module Giact
       self[:test] ||= Giact.test_mode?
     end
     
-    def to_request_hash
-      h = {}
-      self[:test] = Giact.test_mode?
+    def to_request
       self[:amount] = "%.2f" % self[:amount]
-      self.each do |key, value|
-        h[key.to_s.camelize.gsub(/Id$/, "ID")] = value
-      end
-      h
+      {}.merge!(self).camelize_keys!
     end
     
   end

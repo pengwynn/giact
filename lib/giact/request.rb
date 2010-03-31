@@ -1,5 +1,3 @@
-require "json/pure"
-
 module Giact
   class Request
     # @param [Hash] options method options

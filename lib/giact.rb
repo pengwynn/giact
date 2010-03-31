@@ -72,11 +72,17 @@ end
 
 require File.join(directory, 'giact', 'request')
 
-require File.join(directory, 'giact', 'cancel_recurring_check_list')
+require File.join(directory, 'giact', 'cancel_reply')
+require File.join(directory, 'giact', 'installments_list')
 require File.join(directory, 'giact', 'recurring_check_list')
 require File.join(directory, 'giact', 'transaction_result')
 require File.join(directory, 'giact', 'payment_reply')
 require File.join(directory, 'giact', 'payment_request')
 require File.join(directory, 'giact', 'installment_payment_request')
 require File.join(directory, 'giact', 'recurring_payment_request')
+
+require File.join(directory, 'giact', 'refund_reply')
+require File.join(directory, 'giact', 'refund_request')
+require File.join(directory, 'giact', 'partial_refund_request')
+
 require File.join(directory, 'giact', 'client')

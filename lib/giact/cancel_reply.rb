@@ -1,5 +1,5 @@
 module Giact
-  class CancelRecurringCheckList
+  class CancelReply
     attr_accessor :cancelled, :details
     
     def initialize(row="")
@@ -11,7 +11,7 @@ module Giact
     end
     
     def self.from_response(response)
-      response.split(/\n/).map{|line| Giact::CancelRecurringCheckList.new(line)}
+      response.split(/\n/).map{|line| Giact::CancelReply.new(line)}
     end
   end
 end
