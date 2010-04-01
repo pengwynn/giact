@@ -61,6 +61,10 @@ module Giact
     @test_mode || false
   end
   
+  def self.gateway
+    @gateway ||= 1
+  end
+  
   class << self
     attr_accessor :company_id
     attr_accessor :username

@@ -6,17 +6,21 @@ module Giact
     # @option options [String] :username Your Giact API username
     # @option options [String] :password Your Giact API password
     def initialize(options={})
-      @company_id ||= Giact.company_id ||= options[:company_id]
-      @username ||= Giact.username ||= options[:username]
-      @password ||= Giact.password ||= options[:password]
-      @gateway ||= Giact.gateway ||= options[:gateway]
+      @company_id ||= options[:company_id] ||= Giact.company_id
+      @username ||= options[:username] ||= Giact.username
+      @password ||= options[:password] ||= Giact.password
+      @gateway ||= options[:gateway] ||= Giact.gateway
+    end
+    
+    def self.gateway
+      @gateway ||= 1
     end
     
     # Our base level request method.
     # @option operation [String] The API method you wish to call
     # @option params [Mixed] The arguments for the request
     def self.post(operation, params={})
-      Weary.post("https://gatewaydtx1.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}") do |req|
+      Weary.post("https://gatewaydtx#{self.gateway}.giact.com/RealTime/POST/RealTimeChecks.asmx/#{operation}") do |req|
         req.with = params unless params.blank?
       end
     end
@@ -26,7 +30,7 @@ module Giact
     # @return [String] The response string
     def self.parse(response)
       res = Crack::XML.parse(response.body)
-      unless res.empty? && res.include?("string")
+      unless res.empty? and not res.include?("string")
         res["string"]
       else
         false
